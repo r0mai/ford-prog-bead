@@ -1,0 +1,5 @@
+
+.gitignore
+
+: foreach *.ok | ../lexer |> ../lexer %f > %o |> %b.out
+
