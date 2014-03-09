@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$#" -eq "0" ]; then
+	return
+fi
+
+cat $1
+shift
+
+for var in $@; do
+	echo "###"
+	cat $var
+done

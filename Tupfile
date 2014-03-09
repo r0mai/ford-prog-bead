@@ -7,3 +7,5 @@
 
 : *.o |> g++ %f -o %o |> lexer
 
+: *.l *.cpp |> ./concat %f > %o |> packed.txt
+
