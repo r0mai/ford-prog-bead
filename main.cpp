@@ -1,11 +1,13 @@
 
 #include <iostream>
 #include <fstream>
-#include <FlexLexer.h>
+#include "Parser.h"
 
 int main(int argc, char **argv) {
 	std::ifstream in(argv[1]);
-	yyFlexLexer fl(&in, &std::cout);
- 	fl.yylex();
+
+	Parser parser(in);
+	parser.parse();
+
 	return 0;
 }

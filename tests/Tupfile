@@ -1,5 +1,5 @@
 
 .gitignore
 
-: foreach *.ok | ../lexer |> ../lexer %f > %o |> %b.out
+: foreach *.ok | ../simpleCxx |> ../simpleCxx %f > %o |> %b.out
 

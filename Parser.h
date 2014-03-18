@@ -5,31 +5,28 @@
 
 #include <iostream>
 
-// $insert baseclass
 #include "Parserbase.h"
 #include "FlexLexer.h"
 
-
 #undef Parser
-class Parser: public ParserBase
-{
+class Parser : public ParserBase {
+public:
  	Parser(std::istream& in) : lexer(&in, &std::cerr) {}
-    public:
-        int parse();
+	int parse();
 
-    private:
-		yyFlexLexer lexer;
-        void error(char const *msg);    // called on (syntax) errors
-        int lex();                      // returns the next token from the
-                                        // lexical scanner. 
-        void print();                   // use, e.g., d_token, d_loc
+private:
+	yyFlexLexer lexer;
+	void error(char const *msg);	// called on (syntax) errors
+	int lex();					  // returns the next token from the
+									// lexical scanner.
+	void print();				   // use, e.g., d_token, d_loc
 
-    // support functions for parse():
-        void executeAction(int ruleNr);
-        void errorRecovery();
-        int lookup(bool recovery);
-        void nextToken();
-        void print__();
+	// support functions for parse():
+	void executeAction(int ruleNr);
+	void errorRecovery();
+	int lookup(bool recovery);
+	void nextToken();
+	void print__();
 };
 
 
