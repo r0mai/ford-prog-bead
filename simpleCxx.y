@@ -24,7 +24,6 @@
 %token OP_NOT
 %token OP_COLON
 
-
 %left OP_AND OP_OR
 %left OP_EQ
 %left OP_LT OP_GT
@@ -76,8 +75,8 @@ if_statement:
 	;
 
 else_part: /*nothing*/ { std::cout << "else_part -> eps" << std::endl; }
-	| KW_ELSE OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE
-	{ std::cout << "else_part -> KW_ELSE OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE" << std::endl; }
+	| KW_ELSE OP_OPEN_BRACE body OP_CLOSE_BRACE
+	{ std::cout << "else_part -> KW_ELSE OP_OPEN_BRACE body OP_CLOSE_BRACE" << std::endl; }
 	;
 
 assignment: VARIABLE OP_AS expression OP_COLON { std::cout << "assignment -> VARIABLE OP_AS expression OP_COLON" << std::endl; }
