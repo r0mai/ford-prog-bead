@@ -21,7 +21,7 @@ inline int Parser::lex()
 
 inline void Parser::print()
 {
-    print__();           // displays tokens if --print was specified
+//    print__();           // displays tokens if --print was specified
 }
 
 
