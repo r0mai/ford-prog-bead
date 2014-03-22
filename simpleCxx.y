@@ -13,18 +13,8 @@
 %token KW_WHILE
 %token KW_COUT
 %token KW_CIN
-%token OP_AND
-%token OP_OR
-%token OP_EQ
-%token OP_LS
 %token OP_RS
-%token OP_LT
-%token OP_GT
-%token OP_PLUS
-%token OP_MINUS
-%token OP_TIMES
-%token OP_DIVIDE
-%token OP_MOD
+%token OP_LS
 %token OP_OPEN_PAREN
 %token OP_CLOSE_PAREN
 %token OP_CLOSE_BRACE
@@ -35,6 +25,11 @@
 %token OP_OPEN_BRACE
 %token KW_ELSE
 
+%left OP_AND OP_OR
+%left OP_EQ
+%left OP_LT OP_GT
+%left OP_PLUS OP_MINUS
+%left OP_TIMES OP_DIVIDE OP_MOD
 
 %%
 
