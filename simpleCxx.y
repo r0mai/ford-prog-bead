@@ -30,9 +30,12 @@
 %left OP_PLUS OP_MINUS
 %left OP_TIMES OP_DIVIDE OP_MOD
 
+%type <type> expression
+
 %union
 {
 	std::string *text;
+	VariableData::Type *type;
 }
 
 %%
@@ -109,21 +112,21 @@ print_statement: KW_COUT OP_LS expression OP_COLON
 	;
 
 expression:
-	  VARIABLE
-	| KW_TRUE
-	| KW_FALSE
-	| NUMBER
-	| expression OP_AND expression
-	| expression OP_OR expression
-	| expression OP_EQ expression
-	| expression OP_LT expression
-	| expression OP_GT expression
-	| expression OP_PLUS expression
-	| expression OP_MINUS expression
-	| expression OP_TIMES expression
-	| expression OP_DIVIDE expression
-	| expression OP_MOD expression
-	| OP_NOT expression
+	  VARIABLE { $$ = new VariableData::Type(symbolTable[*$1].type); }
+	| KW_TRUE { $$ = new VariableData::Type(VariableData::BOOL); }
+	| KW_FALSE { $$ = new VariableData::Type(VariableData::BOOL); }
+	| NUMBER { $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_AND expression { $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_OR expression { $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_EQ expression { $$ = new VariableData::Type(*$1); }
+	| expression OP_LT expression { $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_GT expression { $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_PLUS expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_MINUS expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_TIMES expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_DIVIDE expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_MOD expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| OP_NOT expression { $$ = new VariableData::Type(VariableData::BOOL); }
 	;
 
 
