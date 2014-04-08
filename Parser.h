@@ -4,7 +4,9 @@
 #define Parser_h_included
 
 #include <iostream>
+#include <sstream>
 
+#include "semantics.hpp"
 #include "Parserbase.h"
 #include "FlexLexer.h"
 
@@ -15,6 +17,10 @@ public:
 	int parse();
 
 private:
+
+	typedef std::map<std::string, VariableData> SymbolTable;
+	SymbolTable symbolTable;
+
 	yyFlexLexer lexer;
 	void error(char const *msg);	// called on (syntax) errors
 	int lex();					  // returns the next token from the

@@ -1,8 +1,8 @@
-%baseclass-preinclude <iostream>
+%baseclass-preinclude "semantics.hpp"
 %lsp-needed
 
 %token NUMBER
-%token VARIABLE
+%token <text> VARIABLE
 %token KW_INT
 %token KW_MAIN
 %token KW_UNSIGNED
@@ -30,80 +30,100 @@
 %left OP_PLUS OP_MINUS
 %left OP_TIMES OP_DIVIDE OP_MOD
 
+%union
+{
+	std::string *text;
+}
+
 %%
 
-start: signature OP_OPEN_BRACE declarations body OP_CLOSE_BRACE { std::cout << "start -> signature OP_OPEN_PAREN declarations body OP_CLOSE_BRACE" << std::endl; }
+start: signature OP_OPEN_BRACE declarations body OP_CLOSE_BRACE
 	;
 
-signature: KW_INT KW_MAIN OP_OPEN_PAREN OP_CLOSE_PAREN { std::cout << "signature -> KW_INT KW_MAIN OP_OPEN_PAREN OP_CLOSE_PAREN" << std::endl; }
+signature: KW_INT KW_MAIN OP_OPEN_PAREN OP_CLOSE_PAREN
 	;
 
-declarations: /*nothing*/ { std::cout << "declarations -> eps" << std::endl; }
-	| declaration declarations { std::cout << "declarations -> declaration declarations" << std::endl; }
+declarations: /*nothing*/
+	| declaration declarations
 	;
 
-declaration: type VARIABLE OP_COLON { std::cout << "declaration -> type VARIABLE OP_COLON" << std::endl; }
-	;
-
-type: KW_BOOL { std::cout << "type -> KW_BOOL" << std::endl; }
-	| KW_UNSIGNED { std::cout << "type -> KW_UNSIGNED" << std::endl; }
+declaration: KW_BOOL VARIABLE OP_COLON
+		{
+			if ( symbolTable.count(*$2) > 0 ) {
+				std::stringstream ss;
+				ss << "Variable " << *$2 << " redeclared. Previous declaration: " << symbolTable[*$2].row << '\n';
+				error(ss.str().c_str());
+			} else {
+				symbolTable[*$2] = VariableData(d_loc__.first_line, VariableData::BOOL);
+			}
+		}
+	| KW_UNSIGNED VARIABLE OP_COLON
+		{
+			if ( symbolTable.count(*$2) > 0 ) {
+				std::stringstream ss;
+				ss << "Variable " << *$2 << " redeclared. Previous declaration: " << symbolTable[*$2].row << '\n';
+				error(ss.str().c_str());
+			} else {
+				symbolTable[*$2] = VariableData(d_loc__.first_line, VariableData::UNSIGNED);
+			}
+		}
 	;
 
 /*we need at least one statement in a body*/
-body: statement statements { std::cout << "body -> statement statements" << std::endl; }
+body: statement statements
 	;
 
-statements: /*nothing*/ { std::cout << "statements -> eps" << std::endl; }
-	| statement statements { std::cout << "statements -> statement statements" << std::endl; }
+statements: /*nothing*/
+	| statement statements
 	;
 
-statement: while_statement { std::cout << "statement -> while_statement" << std::endl; }
-	| if_statement { std::cout << "statement -> if_statement" << std::endl; }
-	| assignment { std::cout << "statement -> assignment" << std::endl; }
-	| read_statement { std::cout << "statement -> read_statement" << std::endl; }
-	| print_statement { std::cout << "statement -> print_statement" << std::endl; }
+statement: while_statement
+	| if_statement
+	| assignment
+	| read_statement
+	| print_statement
 	;
 
 while_statement:
 	KW_WHILE OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE
-   { std::cout << "while_statement -> KW_WHILE OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE" << std::endl; }
+
 	;
 
 if_statement:
 	KW_IF OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE else_part
-	{ std::cout << "if_statement -> KW_IF OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE else_part" << std::endl; }
+
 	;
 
-else_part: /*nothing*/ { std::cout << "else_part -> eps" << std::endl; }
+else_part: /*nothing*/
 	| KW_ELSE OP_OPEN_BRACE body OP_CLOSE_BRACE
-	{ std::cout << "else_part -> KW_ELSE OP_OPEN_BRACE body OP_CLOSE_BRACE" << std::endl; }
+
 	;
 
-assignment: VARIABLE OP_AS expression OP_COLON { std::cout << "assignment -> VARIABLE OP_AS expression OP_COLON" << std::endl; }
+assignment: VARIABLE OP_AS expression OP_COLON
 	;
 
-read_statement: KW_CIN OP_RS expression OP_COLON { std::cout << "read_statement -> KW_CIN OP_RS VARIABLE OP_COLON" << std::endl; }
+read_statement: KW_CIN OP_RS expression OP_COLON
 	;
 
-print_statement: KW_COUT OP_LS expression OP_COLON { std::cout << "print_statement -> KW_COUT OP_LS VARIABLE OP_COLON" << std::endl; }
+print_statement: KW_COUT OP_LS expression OP_COLON
 	;
 
 expression:
-	  VARIABLE { std::cout << "expression -> VARIABLE" << std::endl; }
-	| KW_TRUE { std::cout << "expression -> KW_TRUE" << std::endl; }
-	| KW_FALSE { std::cout << "expression -> KW_FALSE" << std::endl; }
-	| NUMBER { std::cout << "expression -> NUMBER" << std::endl; }
-	| expression OP_AND expression { std::cout << "expression -> expression OP_AND expression" << std::endl; }
-	| expression OP_OR expression { std::cout << "expression -> expression OP_OR expression" << std::endl; }
-	| expression OP_EQ expression { std::cout << "expression -> expression OP_EQ expression" << std::endl; }
-	| expression OP_LT expression { std::cout << "expression -> expression OP_LT expression" << std::endl; }
-	| expression OP_GT expression { std::cout << "expression -> expression OP_GT expression" << std::endl; }
-	| expression OP_PLUS expression { std::cout << "expression -> expression OP_PLUS expression" << std::endl; }
-	| expression OP_MINUS expression { std::cout << "expression -> expression OP_MINUS expression" << std::endl; }
-	| expression OP_TIMES expression { std::cout << "expression -> expression OP_TIMES expression" << std::endl; }
-	| expression OP_DIVIDE expression { std::cout << "expression -> expression OP_DIVIDE expression" << std::endl; }
-	| expression OP_MOD expression { std::cout << "expression -> expression OP_MOD expression" << std::endl; }
-	| OP_NOT expression { std::cout << "expression -> OP_NOT expression" << std::endl; }
+	  VARIABLE
+	| KW_TRUE
+	| KW_FALSE
+	| NUMBER
+	| expression OP_AND expression
+	| expression OP_OR expression
+	| expression OP_EQ expression
+	| expression OP_LT expression
+	| expression OP_GT expression
+	| expression OP_PLUS expression
+	| expression OP_MINUS expression
+	| expression OP_TIMES expression
+	| expression OP_DIVIDE expression
+	| expression OP_MOD expression
+	| OP_NOT expression
 	;
 
 

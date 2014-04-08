@@ -14,9 +14,11 @@ inline void Parser::error(char const *msg)
 }
 
 // $insert lex
-inline int Parser::lex()
-{
-    return lexer.yylex();
+inline int Parser::lex() {
+    int ret = lexer.yylex();
+    d_loc__.first_line = lexer.lineno();
+	d_val__.text = new std::string(lexer.YYText());
+    return ret;
 }
 
 inline void Parser::print()
