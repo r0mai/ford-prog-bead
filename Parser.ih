@@ -9,7 +9,7 @@
 
 inline void Parser::error(char const *msg)
 {
-    std::cerr << msg << '\n';
+    std::cerr << "Parser::error: " << msg << '\n';
 	std::exit(1);
 }
 

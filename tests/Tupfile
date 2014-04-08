@@ -1,6 +1,6 @@
 
 .gitignore
 
-: foreach *.ok | ../simpleCxx |> ../simpleCxx %f > %o |> %b.out
-: foreach *.szem-hibas | ../simpleCxx |> ../negateReturnValue.sh ../simpleCxx %f > %o |> %b.out
+: foreach *.ok | ../simpleCxx |> ../simpleCxx %f && touch %o|> %b.out
+: foreach *.szem-hibas | ../simpleCxx |> ../negateReturnValue.sh ../simpleCxx %f && touch %o |> %b.out
 

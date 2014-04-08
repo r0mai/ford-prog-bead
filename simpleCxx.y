@@ -53,9 +53,7 @@ declarations: /*nothing*/
 declaration: KW_BOOL VARIABLE OP_COLON
 		{
 			if ( symbolTable.count(*$2) > 0 ) {
-				std::stringstream ss;
-				ss << "Variable " << *$2 << " redeclared. Previous declaration: " << symbolTable[*$2].row << '\n';
-				error(ss.str().c_str());
+				error((std::string("Variable ") + *$2 + " redeclared. Previous declaration: " + toString(symbolTable[*$2].row) + '\n').c_str());
 			} else {
 				symbolTable[*$2] = VariableData(d_loc__.first_line, VariableData::BOOL);
 			}
@@ -63,9 +61,7 @@ declaration: KW_BOOL VARIABLE OP_COLON
 	| KW_UNSIGNED VARIABLE OP_COLON
 		{
 			if ( symbolTable.count(*$2) > 0 ) {
-				std::stringstream ss;
-				ss << "Variable " << *$2 << " redeclared. Previous declaration: " << symbolTable[*$2].row << '\n';
-				error(ss.str().c_str());
+				error((std::string("Variable ") + *$2 + " redeclared. Previous declaration: " + toString(symbolTable[*$2].row) + '\n').c_str());
 			} else {
 				symbolTable[*$2] = VariableData(d_loc__.first_line, VariableData::UNSIGNED);
 			}
@@ -89,12 +85,20 @@ statement: while_statement
 
 while_statement:
 	KW_WHILE OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE
-
+		{
+			if ( *$3 != VariableData::BOOL ) {
+				error("Non-bool expression in while");
+			}
+		}
 	;
 
 if_statement:
 	KW_IF OP_OPEN_PAREN expression OP_CLOSE_PAREN OP_OPEN_BRACE body OP_CLOSE_BRACE else_part
-
+		{
+			if ( *$3 != VariableData::BOOL ) {
+				error("Non-bool expression in if");
+			}
+		}
 	;
 
 else_part: /*nothing*/
@@ -103,6 +107,11 @@ else_part: /*nothing*/
 	;
 
 assignment: VARIABLE OP_AS expression OP_COLON
+		{
+			if ( symbolTable[*$1].type != *$3 ) {
+				error("Type error in assignment");
+			}
+		}
 	;
 
 read_statement: KW_CIN OP_RS expression OP_COLON
@@ -118,7 +127,7 @@ expression:
 	| NUMBER { $$ = new VariableData::Type(VariableData::UNSIGNED); }
 	| expression OP_AND expression { $$ = new VariableData::Type(VariableData::BOOL); }
 	| expression OP_OR expression { $$ = new VariableData::Type(VariableData::BOOL); }
-	| expression OP_EQ expression { $$ = new VariableData::Type(*$1); }
+	| expression OP_EQ expression { $$ = new VariableData::Type(VariableData::BOOL); }
 	| expression OP_LT expression { $$ = new VariableData::Type(VariableData::BOOL); }
 	| expression OP_GT expression { $$ = new VariableData::Type(VariableData::BOOL); }
 	| expression OP_PLUS expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }

@@ -49,7 +49,7 @@ COMMENT "//".*$
 {WS}+		//no-op
 
 .			{
-				std::cerr << lineno() << ": Lexikalis hiba." << std::endl;
+				std::cerr << lineno() << ": Syntax error." << std::endl;
 				exit(1);
 			}
 

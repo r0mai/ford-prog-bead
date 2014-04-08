@@ -5,7 +5,14 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <sstream>
 
+template<class T>
+std::string toString(T t) {
+	std::stringstream ss;
+	ss << t;
+	return ss.str();
+}
 
 struct VariableData {
 	enum Type {
