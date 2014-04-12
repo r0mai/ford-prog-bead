@@ -21,6 +21,11 @@ private:
 	typedef std::map<std::string, VariableData> SymbolTable;
 	SymbolTable symbolTable;
 
+	void checkBoolOperator(VariableData::Type type);
+	void checkBoolBoolOperator(VariableData::Type type1, VariableData::Type type2);
+	void checkBoolUnsignedOperator(VariableData::Type type1, VariableData::Type type2);
+	void checkUnsignedUnsignedOperator(VariableData::Type type1, VariableData::Type type2);
+
 	yyFlexLexer lexer;
 	void error(char const *msg);	// called on (syntax) errors
 	int lex();					  // returns the next token from the

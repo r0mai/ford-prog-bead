@@ -125,17 +125,17 @@ expression:
 	| KW_TRUE { $$ = new VariableData::Type(VariableData::BOOL); }
 	| KW_FALSE { $$ = new VariableData::Type(VariableData::BOOL); }
 	| NUMBER { $$ = new VariableData::Type(VariableData::UNSIGNED); }
-	| expression OP_AND expression { $$ = new VariableData::Type(VariableData::BOOL); }
-	| expression OP_OR expression { $$ = new VariableData::Type(VariableData::BOOL); }
-	| expression OP_EQ expression { $$ = new VariableData::Type(VariableData::BOOL); }
-	| expression OP_LT expression { $$ = new VariableData::Type(VariableData::BOOL); }
-	| expression OP_GT expression { $$ = new VariableData::Type(VariableData::BOOL); }
-	| expression OP_PLUS expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
-	| expression OP_MINUS expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
-	| expression OP_TIMES expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
-	| expression OP_DIVIDE expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
-	| expression OP_MOD expression { $$ = new VariableData::Type(VariableData::UNSIGNED); }
-	| OP_NOT expression { $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_AND expression { checkBoolBoolOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_OR expression { checkBoolBoolOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_EQ expression { checkBoolUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_LT expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_GT expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::BOOL); }
+	| expression OP_PLUS expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_MINUS expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_TIMES expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_DIVIDE expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| expression OP_MOD expression { checkUnsignedUnsignedOperator(*$1, *$3); $$ = new VariableData::Type(VariableData::UNSIGNED); }
+	| OP_NOT expression { checkBoolOperator(*$2); $$ = new VariableData::Type(VariableData::BOOL); }
 	;
 
 
