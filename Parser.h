@@ -21,6 +21,8 @@ private:
 	typedef std::map<std::string, VariableData> SymbolTable;
 	SymbolTable symbolTable;
 
+	void declareVariable(const std::string& variableName, VariableData::Type type, int row);
+
 	void checkBoolOperator(VariableData::Type type);
 	void checkBoolBoolOperator(VariableData::Type type1, VariableData::Type type2);
 	void checkBoolUnsignedOperator(VariableData::Type type1, VariableData::Type type2);

@@ -26,6 +26,15 @@ inline void Parser::print()
 //    print__();           // displays tokens if --print was specified
 }
 
+void Parser::declareVariable(const std::string& variableName, VariableData::Type type, int row) {
+	if ( symbolTable.count(variableName) > 0 ) {
+		//still leaks a bit.. whatever...
+		error((std::string("Variable ") + variableName + " redeclared. Previous declaration: " + toString(symbolTable[variableName].row) + '\n').c_str());
+	} else {
+		symbolTable[variableName] = VariableData(d_loc__.first_line, type);
+	}
+}
+
 void Parser::checkBoolOperator(VariableData::Type type) {
 	if (type != VariableData::BOOL) {
 		error("Operator type mismatch");
