@@ -1,4 +1,4 @@
-%baseclass-preinclude "semantics.hpp"
+%baseclass-preinclude "semantics.h"
 %lsp-needed
 
 %token NUMBER

@@ -19,8 +19,8 @@ struct VariableData {
 		UNSIGNED,
 		BOOL
 	};
-	VariableData();
-	VariableData(int row, Type type);
+	VariableData() {}
+	VariableData(int row, Type type) : row(row), type(type) {}
 	int row;
 	Type type;
 };

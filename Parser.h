@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "semantics.hpp"
+#include "semantics.h"
 #include "Parserbase.h"
 #include "FlexLexer.h"
 

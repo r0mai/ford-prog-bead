@@ -9,5 +9,5 @@
 
 : *.o |> g++ %f -o %o |> simpleCxx
 
-: simpleCxx.l simpleCxx.y Parser.h Parser.ih main.cpp |> ./concat %f > %o |> packed.txt
+: simpleCxx.l simpleCxx.y Parser.h Parser.ih semantics.h main.cpp |> ./concat %f > %o |> packed.txt
 
