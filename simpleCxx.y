@@ -226,9 +226,36 @@ expression:
 		$$->code += "push eax\n";
 		delete $1; delete $3;
 	}
-	| expression OP_TIMES expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
-	| expression OP_DIVIDE expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
-	| expression OP_MOD expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
+	| expression OP_TIMES expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		$$ = new ExpressionData("", UNSIGNED);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop ebx\n";
+		$$->code += "pop eax\n";
+		$$->code += "mul ebx\n";
+		$$->code += "push eax\n";
+		delete $1; delete $3;
+	}
+	| expression OP_DIVIDE expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		$$ = new ExpressionData("", UNSIGNED);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop ebx\n";
+		$$->code += "pop eax\n";
+		$$->code += "div ebx\n";
+		$$->code += "push eax\n";
+		delete $1; delete $3;
+	}
+	| expression OP_MOD expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		$$ = new ExpressionData("", UNSIGNED);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop ebx\n";
+		$$->code += "pop eax\n";
+		$$->code += "div ebx\n";
+		$$->code += "push edx\n";
+		delete $1; delete $3;
+	}
 	| OP_NOT expression { checkBoolOperator($2->type); $$ = new ExpressionData("", BOOL); delete $2; }
 	;
 

@@ -7,4 +7,7 @@ int main()
 	y = 10;
 	cout << x + y;
 	cout << y - x;
+	cout << 100*y - x;
+	cout << y / 2;
+	cout << y % 7;
 }
