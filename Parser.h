@@ -13,10 +13,11 @@
 #undef Parser
 class Parser : public ParserBase {
 public:
- 	Parser(std::istream& in) : lexer(&in, &std::cerr) {}
+ 	Parser(std::istream& in) : flagCounter(0), lexer(&in, &std::cerr) {}
 	int parse();
 
 private:
+	unsigned flagCounter;
 
 	typedef std::map<std::string, VariableData> SymbolTable;
 	SymbolTable symbolTable;
@@ -27,6 +28,8 @@ private:
 	void checkBoolBoolOperator(VariableType type1, VariableType type2);
 	void checkBoolUnsignedOperator(VariableType type1, VariableType type2);
 	void checkUnsignedUnsignedOperator(VariableType type1, VariableType type2);
+
+	std::string getNextFlag();
 
 	yyFlexLexer lexer;
 	void error(char const *msg);	// called on (syntax) errors

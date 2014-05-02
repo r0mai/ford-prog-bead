@@ -26,6 +26,10 @@ inline void Parser::print()
 //    print__();           // displays tokens if --print was specified
 }
 
+std::string Parser::getNextFlag() {
+	return "f" + toString(flagCounter++);
+}
+
 void Parser::declareVariable(const std::string& variableName, VariableType type, int row) {
 	if ( symbolTable.count(variableName) > 0 ) {
 		//still leaks a bit.. whatever...

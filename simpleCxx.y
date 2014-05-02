@@ -201,11 +201,85 @@ expression:
 		$$->code += "push dword " + *$1 + "\n";
 		delete $1;
 	}
-	| expression OP_AND expression { checkBoolBoolOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
-	| expression OP_OR expression { checkBoolBoolOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
-	| expression OP_EQ expression { checkBoolUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
-	| expression OP_LT expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
-	| expression OP_GT expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
+	| expression OP_AND expression {
+		checkBoolBoolOperator($1->type, $3->type);
+		$$ = new ExpressionData("", BOOL);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "and eax, edx\n";
+		$$->code += "push eax\n";
+		delete $1; delete $3;
+	}
+	| expression OP_OR expression {
+		checkBoolBoolOperator($1->type, $3->type);
+		$$ = new ExpressionData("", BOOL);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "or eax, edx\n";
+		$$->code += "push eax\n";
+		delete $1; delete $3;
+	}
+	| expression OP_EQ expression {
+		checkBoolUnsignedOperator($1->type, $3->type);
+		std::string flag = getNextFlag();
+		std::string endFlag = getNextFlag();
+		$$ = new ExpressionData("", BOOL);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "cmp eax, edx\n";
+		$$->code += "je " + flag + "\n";
+		$$->code += "mov al, 0\n";
+		$$->code += "push eax\n";
+		$$->code += "jmp " + endFlag + "\n";
+		$$->code += flag + ":\n";
+		$$->code += "mov al, 1\n";
+		$$->code += "push eax\n";
+		$$->code += endFlag + ":\n";
+		delete $1; delete $3;
+	}
+	| expression OP_LT expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		std::string flag = getNextFlag();
+		std::string endFlag = getNextFlag();
+		$$ = new ExpressionData("", BOOL);
+		$$ = new ExpressionData("", BOOL);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "cmp eax, edx\n";
+		$$->code += "jb " + flag + "\n";
+		$$->code += "mov al, 0\n";
+		$$->code += "push eax\n";
+		$$->code += "jmp " + endFlag + "\n";
+		$$->code += flag + ":\n";
+		$$->code += "mov al, 1\n";
+		$$->code += "push eax\n";
+		$$->code += endFlag + ":\n";
+		delete $1; delete $3;
+	}
+	| expression OP_GT expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		std::string flag = getNextFlag();
+		std::string endFlag = getNextFlag();
+		$$ = new ExpressionData("", BOOL);
+		$$ = new ExpressionData("", BOOL);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "cmp eax, edx\n";
+		$$->code += "ja " + flag + "\n";
+		$$->code += "mov al, 0\n";
+		$$->code += "push eax\n";
+		$$->code += "jmp " + endFlag + "\n";
+		$$->code += flag + ":\n";
+		$$->code += "mov al, 1\n";
+		$$->code += "push eax\n";
+		$$->code += endFlag + ":\n";
+		delete $1; delete $3;
+	}
 	| expression OP_PLUS expression {
 		checkUnsignedUnsignedOperator($1->type, $3->type);
 		$$ = new ExpressionData("", UNSIGNED);
@@ -256,7 +330,15 @@ expression:
 		$$->code += "push edx\n";
 		delete $1; delete $3;
 	}
-	| OP_NOT expression { checkBoolOperator($2->type); $$ = new ExpressionData("", BOOL); delete $2; }
+	| OP_NOT expression {
+		checkBoolOperator($2->type);
+		$$ = new ExpressionData("", BOOL);
+		$$->code += $2->code;
+		$$->code += "pop eax\n";
+		$$->code += "not eax\n";
+		$$->code += "push eax\n";
+		delete $2;
+	}
 	;
 
 
