@@ -100,11 +100,11 @@ statements: /*nothing*/ { $$ = new std::string(""); }
 	| statement statements { $$ = new std::string(*$1 + *$2 + "\n"); delete $1; delete $2; }
 	;
 
-statement: while_statement { $$ = new std::string(";while\n" + *$1 + "\n"); delete $1; }
-	| if_statement { $$ = new std::string(";if\n" + *$1 + "\n"); delete $1; }
-	| assignment { $$ = new std::string(";assignment\n" + *$1 + "\n"); delete $1; }
-	| read_statement { $$ = new std::string(";read\n" + *$1 + "\n"); delete $1; }
-	| print_statement { $$ = new std::string(";print\n" + *$1 + "\n"); delete $1; }
+statement: while_statement { $$ = new std::string(*$1); delete $1; }
+	| if_statement { $$ = new std::string(*$1); delete $1; }
+	| assignment { $$ = new std::string(*$1); delete $1; }
+	| read_statement { $$ = new std::string(*$1); delete $1; }
+	| print_statement { $$ = new std::string(*$1); delete $1; }
 	;
 
 while_statement:
@@ -164,7 +164,7 @@ read_statement: KW_CIN OP_RS VARIABLE OP_COLON
 
 print_statement: KW_COUT OP_LS expression OP_COLON
 		{
-			$$ = new std::string($3->code + ";expression is already on top of the stack\n");
+			$$ = new std::string($3->code + "\n");
 				if ($3->type == BOOL) {
 					*$$ += "call ki_logikai\n";
 				} else {
@@ -182,7 +182,7 @@ expression:
 			$$->code += "mov al, byte[" + *$1 + "]\n";
 			$$->code += "push eax\n";
 		} else {
-			$$->code += "push dword[" + *$1 + "]\n";
+			$$->code += "push dword [" + *$1 + "]\n";
 		}
 		delete $1;
 	}
@@ -199,14 +199,33 @@ expression:
 	| NUMBER {
 		$$ = new ExpressionData("", UNSIGNED);
 		$$->code += "push dword " + *$1 + "\n";
+		delete $1;
 	}
 	| expression OP_AND expression { checkBoolBoolOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
 	| expression OP_OR expression { checkBoolBoolOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
 	| expression OP_EQ expression { checkBoolUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
 	| expression OP_LT expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
 	| expression OP_GT expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", BOOL); delete $1; delete $3; }
-	| expression OP_PLUS expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
-	| expression OP_MINUS expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
+	| expression OP_PLUS expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		$$ = new ExpressionData("", UNSIGNED);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "add eax, edx\n";
+		$$->code += "push eax\n";
+		delete $1; delete $3;
+	}
+	| expression OP_MINUS expression {
+		checkUnsignedUnsignedOperator($1->type, $3->type);
+		$$ = new ExpressionData("", UNSIGNED);
+		$$->code += $1->code + $3->code;
+		$$->code += "pop edx\n";
+		$$->code += "pop eax\n";
+		$$->code += "sub eax, edx\n";
+		$$->code += "push eax\n";
+		delete $1; delete $3;
+	}
 	| expression OP_TIMES expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
 	| expression OP_DIVIDE expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }
 	| expression OP_MOD expression { checkUnsignedUnsignedOperator($1->type, $3->type); $$ = new ExpressionData("", UNSIGNED); delete $1; delete $3; }

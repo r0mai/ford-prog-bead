@@ -2,9 +2,9 @@
 int main()
 {
 	unsigned x;
-	bool y;
+	unsigned y;
 	x = 3;
-	y = false;
-	cout << x;
-	cout << y;
+	y = 10;
+	cout << x + y;
+	cout << y - x;
 }
