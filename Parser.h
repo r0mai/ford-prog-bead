@@ -21,12 +21,12 @@ private:
 	typedef std::map<std::string, VariableData> SymbolTable;
 	SymbolTable symbolTable;
 
-	void declareVariable(const std::string& variableName, VariableData::Type type, int row);
+	void declareVariable(const std::string& variableName, VariableType type, int row);
 
-	void checkBoolOperator(VariableData::Type type);
-	void checkBoolBoolOperator(VariableData::Type type1, VariableData::Type type2);
-	void checkBoolUnsignedOperator(VariableData::Type type1, VariableData::Type type2);
-	void checkUnsignedUnsignedOperator(VariableData::Type type1, VariableData::Type type2);
+	void checkBoolOperator(VariableType type);
+	void checkBoolBoolOperator(VariableType type1, VariableType type2);
+	void checkBoolUnsignedOperator(VariableType type1, VariableType type2);
+	void checkUnsignedUnsignedOperator(VariableType type1, VariableType type2);
 
 	yyFlexLexer lexer;
 	void error(char const *msg);	// called on (syntax) errors

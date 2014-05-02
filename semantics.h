@@ -14,15 +14,23 @@ std::string toString(T t) {
 	return ss.str();
 }
 
+enum VariableType {
+	UNSIGNED,
+	BOOL
+};
+
 struct VariableData {
-	enum Type {
-		UNSIGNED,
-		BOOL
-	};
 	VariableData() {}
-	VariableData(int row, Type type) : row(row), type(type) {}
+	VariableData(int row, VariableType type) : row(row), type(type) {}
 	int row;
-	Type type;
+	VariableType type;
+};
+
+struct ExpressionData {
+	ExpressionData() {}
+	ExpressionData(const std::string& code, VariableType type) : code(code), type(type) {}
+	std::string code;
+	VariableType type;
 };
 
 #endif

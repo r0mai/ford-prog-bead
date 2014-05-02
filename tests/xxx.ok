@@ -1,0 +1,10 @@
+
+int main()
+{
+	unsigned x;
+	bool y;
+	x = 3;
+	y = false;
+	cout << x;
+	cout << y;
+}

@@ -26,7 +26,7 @@ inline void Parser::print()
 //    print__();           // displays tokens if --print was specified
 }
 
-void Parser::declareVariable(const std::string& variableName, VariableData::Type type, int row) {
+void Parser::declareVariable(const std::string& variableName, VariableType type, int row) {
 	if ( symbolTable.count(variableName) > 0 ) {
 		//still leaks a bit.. whatever...
 		error((std::string("Variable ") + variableName + " redeclared. Previous declaration: " + toString(symbolTable[variableName].row) + '\n').c_str());
@@ -35,26 +35,26 @@ void Parser::declareVariable(const std::string& variableName, VariableData::Type
 	}
 }
 
-void Parser::checkBoolOperator(VariableData::Type type) {
-	if (type != VariableData::BOOL) {
+void Parser::checkBoolOperator(VariableType type) {
+	if (type != BOOL) {
 		error("Operator type mismatch");
 	}
 }
 
-void Parser::checkBoolBoolOperator(VariableData::Type type1, VariableData::Type type2) {
-	if (type1 != VariableData::BOOL || type2 != VariableData::BOOL ) {
+void Parser::checkBoolBoolOperator(VariableType type1, VariableType type2) {
+	if (type1 != BOOL || type2 != BOOL ) {
 		error("Operator type mismatch");
 	}
 }
 
-void Parser::checkBoolUnsignedOperator(VariableData::Type type1, VariableData::Type type2) {
+void Parser::checkBoolUnsignedOperator(VariableType type1, VariableType type2) {
 	if (type1 != type2) {
 		error("Operator type mismatch");
 	}
 }
 
-void Parser::checkUnsignedUnsignedOperator(VariableData::Type type1, VariableData::Type type2) {
-	if (type1 != VariableData::UNSIGNED || type2 != VariableData::UNSIGNED) {
+void Parser::checkUnsignedUnsignedOperator(VariableType type1, VariableType type2) {
+	if (type1 != UNSIGNED || type2 != UNSIGNED) {
 		error("Operator type mismatch");
 	}
 }
