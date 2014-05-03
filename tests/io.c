@@ -23,6 +23,8 @@ int be_logikai()
 
 void ki_egesz( unsigned szam )
 {
+	int b = 1;
+	int c = !b;
 	fprintf( stdout, "%u\n", szam );
 }
 

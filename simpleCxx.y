@@ -21,12 +21,12 @@
 %token OP_OPEN_PAREN
 %token OP_CLOSE_PAREN
 %token OP_AS
-%token OP_NOT
 %token OP_COLON
 
 %left OP_AND OP_OR
 %left OP_EQ
 %left OP_LT OP_GT
+%left OP_NOT
 %left OP_PLUS OP_MINUS
 %left OP_TIMES OP_DIVIDE OP_MOD
 
@@ -113,7 +113,18 @@ while_statement:
 			if ( $3->type != BOOL ) {
 				error("Non-bool expression in while");
 			}
-			delete $3;
+			std::string flag = getNextFlag();
+			std::string endFlag = getNextFlag();
+			$$ = new std::string();
+			*$$ += flag + ":\n";
+			*$$ += $3->code;
+			*$$ += "pop eax\n";
+			*$$ += "cmp eax, 0\n";
+			*$$ += "je " + endFlag + "\n";
+			*$$ += *$6;
+			*$$ += "jmp " + flag + "\n";
+			*$$ += endFlag + ":\n";
+			delete $3; delete $6;
 		}
 	;
 
@@ -123,13 +134,28 @@ if_statement:
 			if ( $3->type != BOOL ) {
 				error("Non-bool expression in if");
 			}
-			delete $3;
+			std::string endFlag = getNextFlag();
+			std::string elseEndFlag = getNextFlag();
+			$$ = new std::string();
+			*$$ += $3->code;
+			*$$ += "pop eax\n";
+			*$$ += "cmp eax, 0\n";
+			*$$ += "je " + endFlag + "\n";
+			*$$ += *$6;
+			*$$ += "jmp " + elseEndFlag + "\n";
+			*$$ += endFlag + ":\n";
+			*$$ += *$8;
+			*$$ += elseEndFlag + ":\n";
+			delete $3; delete $6; delete $8;
 		}
 	;
 
-else_part: /*nothing*/
+else_part: { $$ = new std::string(""); }
 	| KW_ELSE OP_OPEN_BRACE body OP_CLOSE_BRACE
-
+	{
+		$$ = new std::string(*$3);
+		delete $3;
+	}
 	;
 
 assignment: VARIABLE OP_AS expression OP_COLON
@@ -137,7 +163,6 @@ assignment: VARIABLE OP_AS expression OP_COLON
 			if (symbolTable[*$1].type != $3->type) {
 				error("Type error in assignment");
 			}
-			//TODO
 			$$ = new std::string($3->code);
 			if (symbolTable[*$1].type == BOOL) {
 				*$$ += "pop eax\n";
@@ -153,6 +178,7 @@ read_statement: KW_CIN OP_RS VARIABLE OP_COLON
 		{
 			if (symbolTable[*$3].type == BOOL) {
 				$$ = new std::string("call be_logikai\n");
+				*$$ += "mov eax, 0\n";
 				*$$ += "mov [" + *$3 + "], al\n";
 			} else {
 				$$ = new std::string("call be_egesz\n");
@@ -179,6 +205,7 @@ expression:
 	VARIABLE {
 		$$ = new ExpressionData("", symbolTable[*$1].type);
 		if (symbolTable[*$1].type == BOOL) {
+			$$->code += "mov eax, 0\n";
 			$$->code += "mov al, byte[" + *$1 + "]\n";
 			$$->code += "push eax\n";
 		} else {
@@ -188,11 +215,13 @@ expression:
 	}
 	| KW_TRUE {
 		$$ = new ExpressionData("", BOOL);
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 1\n";
 		$$->code += "push eax\n";
 	}
 	| KW_FALSE {
 		$$ = new ExpressionData("", BOOL);
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 0\n";
 		$$->code += "push eax\n";
 	}
@@ -231,10 +260,12 @@ expression:
 		$$->code += "pop eax\n";
 		$$->code += "cmp eax, edx\n";
 		$$->code += "je " + flag + "\n";
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 0\n";
 		$$->code += "push eax\n";
 		$$->code += "jmp " + endFlag + "\n";
 		$$->code += flag + ":\n";
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 1\n";
 		$$->code += "push eax\n";
 		$$->code += endFlag + ":\n";
@@ -251,10 +282,12 @@ expression:
 		$$->code += "pop eax\n";
 		$$->code += "cmp eax, edx\n";
 		$$->code += "jb " + flag + "\n";
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 0\n";
 		$$->code += "push eax\n";
 		$$->code += "jmp " + endFlag + "\n";
 		$$->code += flag + ":\n";
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 1\n";
 		$$->code += "push eax\n";
 		$$->code += endFlag + ":\n";
@@ -271,10 +304,12 @@ expression:
 		$$->code += "pop eax\n";
 		$$->code += "cmp eax, edx\n";
 		$$->code += "ja " + flag + "\n";
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 0\n";
 		$$->code += "push eax\n";
 		$$->code += "jmp " + endFlag + "\n";
 		$$->code += flag + ":\n";
+		$$->code += "mov eax, 0\n";
 		$$->code += "mov al, 1\n";
 		$$->code += "push eax\n";
 		$$->code += endFlag + ":\n";
@@ -316,6 +351,7 @@ expression:
 		$$->code += $1->code + $3->code;
 		$$->code += "pop ebx\n";
 		$$->code += "pop eax\n";
+		$$->code += "mov edx, 0\n";
 		$$->code += "div ebx\n";
 		$$->code += "push eax\n";
 		delete $1; delete $3;
@@ -326,16 +362,20 @@ expression:
 		$$->code += $1->code + $3->code;
 		$$->code += "pop ebx\n";
 		$$->code += "pop eax\n";
+		$$->code += "mov edx, 0\n";
 		$$->code += "div ebx\n";
 		$$->code += "push edx\n";
 		delete $1; delete $3;
 	}
 	| OP_NOT expression {
 		checkBoolOperator($2->type);
+		std::string flag = getNextFlag();
+		std::string endFlag = getNextFlag();
 		$$ = new ExpressionData("", BOOL);
 		$$->code += $2->code;
 		$$->code += "pop eax\n";
-		$$->code += "not eax\n";
+		$$->code += "cmp eax, 0\n";
+		$$->code += "sete al\n";
 		$$->code += "push eax\n";
 		delete $2;
 	}

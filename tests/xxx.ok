@@ -1,31 +1,39 @@
 
 int main()
 {
-	unsigned x;
-	unsigned y;
-	bool z;
+	bool b;
 
-	x = 3;
-	y = 10;
-	z = true;
+	b = true;
 
-	cout << x > y;
-	cout << y > x;
-	cout << x > x;
-
-	cout << x + y;
-	cout << y - x;
-	cout << 100*y - x;
-	cout << y / 2;
-	cout << y % 7;
-	cout << !z;
-	cout << !!z;
-	cout << true || true;
-	cout << false || true;
-	cout << true || false;
-	cout << false || false;
-	cout << 3 == 4;
-	cout << 4 == 4;
-	cout << true == true;
-	cout << false == true;
+	if (!b && !b) {
+		cout << b;
+	}
+//	while (i < y) {
+//		if (i % 2 == 0) {
+//			cout << i;
+//		} else {
+//			cout << i*10;
+//		}
+//		i = i + 1;
+//	}
+//
+//	cout << x > y;
+//	cout << y > x;
+//	cout << x > x;
+//
+//	cout << x + y;
+//	cout << y - x;
+//	cout << 100*y - x;
+//	cout << y / 2;
+//	cout << y % 7;
+//	cout << !z;
+//	cout << !!z;
+//	cout << true || true;
+//	cout << false || true;
+//	cout << true || false;
+//	cout << false || false;
+//	cout << 3 == 4;
+//	cout << 4 == 4;
+//	cout << true == true;
+//	cout << false == true;
 }
