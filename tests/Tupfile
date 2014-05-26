@@ -3,6 +3,6 @@
 
 : foreach *.ok | ../simpleCxx |> ../simpleCxx %f > %o |> %B.asm
 : foreach *.asm |> nasm -O0 -felf %f |> %B.o
-: foreach *.o |> gcc -O0 %f io.c -o %o |> %B.bin
+: foreach *.o |> gcc -m32 -O0 %f io.c -o %o |> %B.bin
 : foreach *.szem-hibas | ../simpleCxx |> ../negateReturnValue.sh ../simpleCxx %f && touch %o |> %b.out
 
