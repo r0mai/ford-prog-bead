@@ -52,12 +52,18 @@ void Parser::checkBoolBoolOperator(VariableType type1, VariableType type2) {
 }
 
 void Parser::checkBoolUnsignedOperator(VariableType type1, VariableType type2) {
+	if (type1 == UNKNOWN || type2 == UNKNOWN) {
+		error("Unknwon type");
+	}
 	if (type1 != type2) {
 		error("Operator type mismatch");
 	}
 }
 
 void Parser::checkUnsignedUnsignedOperator(VariableType type1, VariableType type2) {
+	if (type1 == UNKNOWN || type2 == UNKNOWN) {
+		error("Unknwon type");
+	}
 	if (type1 != UNSIGNED || type2 != UNSIGNED) {
 		error("Operator type mismatch");
 	}

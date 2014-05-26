@@ -15,19 +15,20 @@ std::string toString(T t) {
 }
 
 enum VariableType {
+	UNKNOWN = 0,
 	UNSIGNED,
 	BOOL
 };
 
 struct VariableData {
-	VariableData() {}
+	VariableData() : type(UNKNOWN) {}
 	VariableData(int row, VariableType type) : row(row), type(type) {}
 	int row;
 	VariableType type;
 };
 
 struct ExpressionData {
-	ExpressionData() {}
+	ExpressionData() : type(UNKNOWN) {}
 	ExpressionData(const std::string& code, VariableType type) : code(code), type(type) {}
 	std::string code;
 	VariableType type;
